@@ -1,0 +1,31 @@
+heartbeat.monitors:
+- type: http
+  enabled: true
+  schedule: '@every 5s'
+  urls: ${ELASTIC_FULL_URL}
+  mode: any
+  timeout: 5s
+  check.request:
+    method: "GET"
+  check.response:
+    status: 200
+- type: http
+  enabled: true
+  schedule: '@every 5s'
+  urls: ${KIBANA_FULL_URL}
+  mode: any
+  timeout: 5s
+  check.request:
+    method: "GET"
+  check.response:
+    status: 200
+output:
+  elasticsearch:
+    hosts: ["${ELASTIC_URL}"]
+    protocol: "http"
+setup:
+  dashboards:
+    enabled: true
+  kibana:
+    host: ${KIBANA_URL}
+    protocol: "http"

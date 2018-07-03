@@ -1,0 +1,11 @@
+# packetbeat.modules:
+# output:
+#   elasticsearch:
+#     hosts: ["${ELASTIC_URL}"]
+#     protocol: "http"
+# setup:
+#   dashboards:
+#     enabled: true
+#   kibana:
+#     host: ${KIBANA_URL}
+#     protocol: "http"

@@ -1,0 +1,107 @@
+version: "2"
+
+services:
+
+  nginx:
+    build:
+      context: ./nginx/
+      dockerfile: Dockerfile
+    ports:
+      - "5602:443"
+      - "5603:444"
+    volumes:
+      - ./logs/:/var/log/nginx/
+    env_file:
+      - ./.env
+    restart: on-failure
+    networks:
+      - es
+
+  elasticsearch:
+    build:
+      context: ./elasticsearch/
+      dockerfile: Dockerfile
+    environment:
+      SERVER_NAME: ${ELASTIC_HOST}
+    ports:
+      - "9200:9200"
+    restart: on-failure
+    networks:
+      - es
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana-oss:6.2.4
+    ports:
+      - "5601:5601" 
+    depends_on:
+      - ${ELASTIC_HOST}
+    environment:
+      SERVER_NAME: ${KIBANA_HOST}
+      ELASTICSEARCH_URL: ${ELASTIC_FULL_URL}
+    restart: on-failure
+    networks:
+      - es
+
+  heartbeat:
+    build:
+      context: ./heartbeat/
+      dockerfile: Dockerfile_heartbeat
+    env_file:
+      - ./.env
+    depends_on:
+      - ${KIBANA_HOST}
+    volumes:
+      - /private/var/log/:/var/log/host/:ro
+    restart: on-failure
+    networks:
+      - es
+
+  filebeat:
+    build:
+      context: ./filebeat/
+      dockerfile: Dockerfile_filebeat
+    env_file:
+      - ./.env
+    depends_on:
+      - ${KIBANA_HOST}
+    volumes:
+      - ./logs/:/var/log/
+    restart: on-failure
+    networks:
+      - es
+
+  metricbeat:
+    build:
+      context: ./metricbeat/
+      dockerfile: Dockerfile_metricbeat
+    env_file:
+      - ./.env
+    depends_on:
+      - ${KIBANA_HOST}
+    restart: on-failure
+    networks:
+      - es
+
+  # packetbeat:
+  #   build:
+  #     context: ./packetbeat/
+  #     dockerfile: Dockerfile_packetbeat
+  #   env_file:
+  #     - ./.env
+  #   depends_on:
+  #     - ${KIBANA_HOST}
+  #   restart: on-failure
+  #   networks:
+  #     - es
+
+volumes:
+  nginx:
+  elasticsearch:
+  kibana:
+  heartbeat:
+  filebeat:
+  metricbeat:
+  # packetbeat:  
+
+networks:
+  es:

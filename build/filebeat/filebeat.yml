@@ -1,0 +1,18 @@
+filebeat.modules:
+- module: nginx
+  access:
+    var.paths: ["/var/log/access.log*"]
+  error:
+    var.paths: ["/var/log/error.log*"]
+- module: system
+  syslog:
+    var.paths: ["/var/log/host/system.log*"]
+output:
+  elasticsearch:
+    hosts: ["${ELASTIC_URL}"]
+    protocol: http
+setup:
+  dashboards.enabled: true
+  kibana:
+    host: ${KIBANA_URL}
+    protocol: http

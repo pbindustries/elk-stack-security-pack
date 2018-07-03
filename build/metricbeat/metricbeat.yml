@@ -1,0 +1,22 @@
+metricbeat.modules:
+
+# Nginx Module 
+- module: docker
+  metricsets: ["container", "cpu", "diskio", "healthcheck", "info", "memory", "network"]
+  hosts: ["http://localhost:444"]
+  protocol: "http"
+  period: 10s
+
+# All data to indexed to Elasticsearch
+output:
+  elasticsearch:
+    hosts: ["${ELASTIC_URL}"]
+    protocol: "http"
+
+# Sets up dashboards and access to kibana
+setup:
+  dashboards:
+    enabled: true
+  kibana:
+    host: ${KIBANA_URL}
+    protocol: "http"
