@@ -82,17 +82,17 @@ services:
     networks:
       - es
 
-  # packetbeat:
-  #   build:
-  #     context: ./packetbeat/
-  #     dockerfile: Dockerfile_packetbeat
-  #   env_file:
-  #     - ./.env
-  #   depends_on:
-  #     - ${KIBANA_HOST}
-  #   restart: on-failure
-  #   networks:
-  #     - es
+  packetbeat:
+    build:
+      context: ./packetbeat/
+      dockerfile: Dockerfile_packetbeat
+    env_file:
+      - ./.env
+    depends_on:
+      - ${KIBANA_HOST}
+    restart: on-failure
+    networks:
+      - es
 
 volumes:
   nginx:
@@ -101,7 +101,7 @@ volumes:
   heartbeat:
   filebeat:
   metricbeat:
-  # packetbeat:  
+  packetbeat:  
 
 networks:
   es:
